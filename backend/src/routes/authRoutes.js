@@ -15,10 +15,12 @@ function resetKey(token) {
 }
 
 function setAuthCookie(res, token) {
+  const isProd = process.env.NODE_ENV === 'production';
+
   res.cookie('access_token', token, {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
     maxAge: 1000 * 60 * 60 * 24,
   });
 }
@@ -53,10 +55,11 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.clearCookie('access_token', {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
   });
   res.json({ ok: true });
 });
